@@ -9,25 +9,47 @@ from .serializers import FormSerializer
 
 @api_view(['GET'])
 def getFormulario(request):
-    form = Formulario.objects.all()
-    serializer = FormSerializer(form, many =True)
-    return Response(serializer.data)
+    
+    respuesta ={}
+    respuesta['estado'] = False
+    respuesta['mensaje_error'] = ''
+    form = Formulario.objects.values()
+    print(form)
+    if form:
+        respuesta['estado'] = True
+        respuesta['datos'] = form
+    return Response(respuesta)
 
 @api_view(['POST'])
 def postFormulario(request):
+    respuesta ={}
+    respuesta['estado'] = False
+    respuesta['mensaje_error'] = ''
     data = request.data
-    form = Formulario.objects.create(
-        nombre = data['nombre'],
-        apellidop = data['apellidop'],
-        apellidom = data['apellidom'],
-        estado = data['estado'],
-        telefono = data['telefono'],
-        rut = data['rut'],
-        password = data['password'],
-        rol = data['rol']
+    form = FormSerializer(
+        data=
+        {'nombre':data['nombre'],
+        'apellidop':data['apellidop'],
+        'apellidom':data['apellidom'],
+        'estado':data['estado'],
+        'telefono':data['telefono'],
+        'rut':data['rut'],
+        'password':data['password'],
+        'rol':data['rol']
+        }
+
     )
-    serializer = FormSerializer(form, many=False)
-    return Response(serializer.data)
+    if form.is_valid():
+        form.save()
+        respuesta['estado'] = True
+        respuesta['datos'] = form.data
+        print('guardado')
+    else:
+        mensaje_error = form.errors
+        respuesta['estado'] = False
+        respuesta['mensaje_error'] = mensaje_error
+        print(mensaje_error)
+    return Response(respuesta)
 
 @api_view(['PUT'])
 def putFormulario(request, pk):

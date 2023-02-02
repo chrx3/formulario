@@ -6,8 +6,6 @@ import axios from "axios";
 import Header from "./components/Header";
 //formuarlio
 import UsuarioForm from "./components/UsuarioForm";
-//Usuarios
-import Usuarios from "./components/Usuarios";
 function App() {
   const[usuarios, setUsuarios ] = useState([]);
 
@@ -28,7 +26,6 @@ function App() {
       <div className="container p-4">
         <br/>
         <UsuarioForm usuarios={usuarios} setUsuarios={setUsuarios}/> 
-        <Usuarios usuarios={usuarios} setUsuarios={setUsuarios}/>
       </div>
       
     </>

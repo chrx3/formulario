@@ -1,96 +1,156 @@
-import React, {useState} from "react";
+import React, {Component, useState} from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import axios from 'axios';
-import Usuarios from "./Usuarios";
+import ListGroup from 'react-bootstrap/ListGroup';
+import Modal from 'react-bootstrap/Modal';
+import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
+import ModalHeader from "react-bootstrap/esm/ModalHeader";
+import{ FaEdit, FaTrashAlt } from 'react-icons/fa';
 
-export default function UsuarioForm({usuarios, setUsuarios}){
-    const [nombre, setNombre] = useState('');
-    const [apellidop, setApellidop] = useState('');
-    const [apellidom, setApellidom] = useState('');
-    const [estado, setEstado] = useState('');
-    const [telefono, setTelefono] = useState('');
-    const [rut, setRut] = useState('');
-    const [password, setPassword] = useState('');
-    const [rol, setRol] = useState('');
 
-    const handleChange = e =>{
-        setNombre(e.target.nombre);
-        setApellidop(e.target.apellidop);
-        setApellidom(e.target.apellidom);
-        setEstado(e.target.estado);
-        setTelefono(e.target.telefono);
-        setRut(e.target.rut);
-        setPassword(e.target.password);
-        setRol(e.target.rol);
+
+export default class  UsuarioForm extends Component{
+    constructor(){
+        super();
+        this.state = {
+            usuarios : [],
+            nombre : null,
+            apellidop : null,
+            apellidon : null,
+            estado : null,
+            telefono : null,
+            rut : null,
+            password : null,
+            rol : null
+
+        }
+    }
+    componentDidMount(){
+        this.updateUser();
     }
 
-    const handleSubmit = e =>{
-        e.preventDefault();
-        if(!password){
-            alert('Ingrese un nombre')
-        }
 
-        axios.post('/post/', {
-            nombre:nombre,
-            apellidop:apellidop,
-            apellidom:apellidom,
-            estado:estado,
-            telefono:telefono,
-            rut:rut,
-            password:password,
-            rol:rol
+    updateUser = ()=>{
+        axios.get('/get/',{
+
         }).then((response) =>{
-            setNombre('');
-            setApellidop('');
-            setApellidom('');
-            setEstado('');
-            setTelefono('');
-            setRut('');
-            setPassword('');
-            setRol('');
-            const { data } = response;
-            setUsuarios([
-                ...usuarios,
-                data
-            ]).catch(() =>{
-                alert('Algo salió mal')
+            if (response.data.estado){
+                this.setState({
+                    usuarios:response.data.datos
             })
+            }
         })
     }
+   
 
-    return(
-        <Form onSubmit={handleSubmit}>
-            <InputGroup className="mb-3">
-                <FormControl onChange={handleChange} value={nombre} placeholder="Nombre" type="text"/><br/>
-            </InputGroup>
-            <InputGroup className="mb-3">
-                <FormControl onChange={handleChange} value={apellidop} placeholder="Apellido paterno" type="text"/><br/>
-            </InputGroup>
-            <InputGroup className="mb-3">
-                <FormControl onChange={handleChange} value={apellidom} placeholder="Apellido materno" type="text"/><br/>
-            </InputGroup> 
-            <InputGroup className="mb-3">
-                <FormControl onChange={handleChange} value={estado} placeholder="Estado" type="text"/><br/>
-            </InputGroup>
-            <InputGroup className="mb-3">
-                <FormControl onChange={handleChange} value={telefono} placeholder="Teléfono" type="text"/><br/>
-                </InputGroup>    
-            <InputGroup className="mb-3">
-                <FormControl onChange={handleChange} value={rut} placeholder="Rut" type="text"/><br/>
-            </InputGroup>    
-            <InputGroup className="mb-3">  
-                <FormControl onChange={handleChange} value={password} placeholder="Password" type="password"/><br/>
-            </InputGroup>
-            <InputGroup className="mb-3">
-                <FormControl onChange={handleChange} value={rol} placeholder="Rol" type="text"/><br/>
+    handleSubmit = () =>{
+        
+
+        axios.post('/post/', {
+            nombre : this.state.nombre,
+            apellidop: this.state.apellidop,
+            apellidom: this.state.apellidom,
+            estado: this.state.estado,
+            telefono: this.state.telefono,
+            rut: this.state.rut,
+            password: this.state.password,
+            rol: this.state.rol
+        }).then((response) =>{console.log(response)
+            if (response.data.estado){
+                alert('usuario ingresado')
+                const { data } = response.data.datos;
+                this.updateUser()
                 
-            </InputGroup>
-            <Button variant='dark' type='submit'>
-                Ingresar
-            </Button>
-        </Form>
-    )
+
+            }else{
+                alert('Error',response.mensaje_error)
+            }
+
+            
+        })
+
+    }
+    cambiarValores = (e) =>{
+        const {name,value} = e.target
+        this.setState({
+            [name]:value
+        })
+    }
+  
+    render(){
+    return(
+        <div>
+            <Form>
+                <InputGroup className="mb-3">
+                    <FormControl name="nombre" value={this.state.nombre} onChange={this.cambiarValores}  placeholder="Nombre" type="text"/><br/>
+                </InputGroup>
+                <InputGroup className="mb-3">
+                    <FormControl name="apellidop" value={this.state.apellidop} onChange={this.cambiarValores} placeholder="Apellido paterno" type="text"/><br/>
+                </InputGroup>
+                <InputGroup className="mb-3">
+                    <FormControl name="apellidom" value={this.state.apellidom} onChange={this.cambiarValores} placeholder="Apellido materno" type="text"/><br/>
+                </InputGroup> 
+                <InputGroup className="mb-3">
+                    <FormControl name="estado" value={this.state.estado} onChange={this.cambiarValores} placeholder="Estado" type="text"/><br/>
+                </InputGroup>
+                <InputGroup className="mb-3">
+                    <FormControl name="telefono" value={this.state.telefono} onChange={this.cambiarValores} placeholder="Teléfono" type="text"/><br/>
+                    </InputGroup>    
+                <InputGroup className="mb-3">
+                    <FormControl name="rut" value={this.state.rut} onChange={this.cambiarValores} placeholder="Rut" type="text"/><br/>
+                </InputGroup>    
+                <InputGroup className="mb-3">  
+                    <FormControl name="password" value={this.state.password} onChange={this.cambiarValores} placeholder="Password" type="password"/><br/>
+                </InputGroup>
+                <InputGroup className="mb-3">
+                    <FormControl name="rol" value={this.state.rol} onChange={this.cambiarValores} placeholder="Rol" type="text"/><br/>
+                    
+                </InputGroup>
+                <Button onClick={this.handleSubmit} variant='dark' type='submit'>
+                    Ingresar
+                </Button>
+
+            </Form>
+            
+                <ListGroup>
+                    {this.state.usuarios.map( usuarios =>{
+                        return(
+
+                    <ListGroupItem key={usuarios.id} className="d-flex justify-content-between align-items-center">
+                        {usuarios.nombre}
+                        
+                        <div>
+                            <FaEdit size={20} style={{cursor:'pointer'}}/>
+                            <FaTrashAlt size={20} style={{cursor:'pointer'}}/>
+                        </div>
+                    </ListGroupItem>
+                    )
+                    })}
+                    
+                </ListGroup>
+
+                <Modal>
+                    <ModalHeader>
+                        <Modal.Title>
+                            Edit Usuario
+                        </Modal.Title>
+                    </ModalHeader>
+                    <Modal.Body>
+                        <FormControl/>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="dark">
+                            Cerrar
+                        </Button>
+                        <Button  variant="dark">
+                            Guardar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+        </div>
+    )}
+
 }
