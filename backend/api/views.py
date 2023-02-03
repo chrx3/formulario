@@ -14,7 +14,7 @@ def getFormulario(request):
     respuesta['estado'] = False
     respuesta['mensaje_error'] = ''
     form = Formulario.objects.values()
-    print(form)
+    
     if form:
         respuesta['estado'] = True
         respuesta['datos'] = form
@@ -27,8 +27,8 @@ def postFormulario(request):
     respuesta['mensaje_error'] = ''
     data = request.data
     form = FormSerializer(
-        data=
-        {'nombre':data['nombre'],
+        data={
+        'nombre':data['nombre'],
         'apellidop':data['apellidop'],
         'apellidom':data['apellidom'],
         'estado':data['estado'],

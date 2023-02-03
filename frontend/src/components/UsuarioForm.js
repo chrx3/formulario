@@ -1,4 +1,4 @@
-import React, {Component, useState} from "react";
+import React, {Component} from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -6,9 +6,10 @@ import FormControl from 'react-bootstrap/FormControl';
 import axios from 'axios';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Modal from 'react-bootstrap/Modal';
-import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
+
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
 import{ FaEdit, FaTrashAlt } from 'react-icons/fa';
+import MaterialTable from 'material-table';
 
 
 
@@ -17,17 +18,18 @@ export default class  UsuarioForm extends Component{
         super();
         this.state = {
             usuarios : [],
-            nombre : null,
-            apellidop : null,
-            apellidon : null,
-            estado : null,
-            telefono : null,
-            rut : null,
-            password : null,
-            rol : null
+            nombre : '',
+            apellidop : '',
+            apellidom : '',
+            estado : '',
+            telefono : '',
+            rut : '',
+            password : '',
+            rol : ''
 
         }
     }
+
     componentDidMount(){
         this.updateUser();
     }
@@ -47,8 +49,6 @@ export default class  UsuarioForm extends Component{
    
 
     handleSubmit = () =>{
-        
-
         axios.post('/post/', {
             nombre : this.state.nombre,
             apellidop: this.state.apellidop,
@@ -61,7 +61,7 @@ export default class  UsuarioForm extends Component{
         }).then((response) =>{console.log(response)
             if (response.data.estado){
                 alert('usuario ingresado')
-                const { data } = response.data.datos;
+                
                 this.updateUser()
                 
 
@@ -79,10 +79,13 @@ export default class  UsuarioForm extends Component{
             [name]:value
         })
     }
+
+    
   
     render(){
     return(
         <div>
+            
             <Form>
                 <InputGroup className="mb-3">
                     <FormControl name="nombre" value={this.state.nombre} onChange={this.cambiarValores}  placeholder="Nombre" type="text"/><br/>
@@ -119,14 +122,14 @@ export default class  UsuarioForm extends Component{
                     {this.state.usuarios.map( usuarios =>{
                         return(
 
-                    <ListGroupItem key={usuarios.id} className="d-flex justify-content-between align-items-center">
+                    <ListGroup.Item key={usuarios.id} className="d-flex justify-content-between align-items-center">
                         {usuarios.nombre}
                         
                         <div>
                             <FaEdit size={20} style={{cursor:'pointer'}}/>
                             <FaTrashAlt size={20} style={{cursor:'pointer'}}/>
                         </div>
-                    </ListGroupItem>
+                    </ListGroup.Item>
                     )
                     })}
                     
@@ -150,7 +153,9 @@ export default class  UsuarioForm extends Component{
                         </Button>
                     </Modal.Footer>
                 </Modal>
+                
         </div>
+        
     )}
 
 }
