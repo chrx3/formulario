@@ -18,7 +18,7 @@ export default class  UsuarioForm extends Component{
         super();
         this.state = {
             usuarios : [],
-            id : '',
+
             nombre : '',
             apellidop : '',
             apellidom : '',
@@ -50,12 +50,15 @@ export default class  UsuarioForm extends Component{
         })
     }
     //aun no agarra id
-    deleteUser = ()=>{
-        axios.delete('/delete/',{
+    deleteUser (id){
+        axios.delete(`/delete/${id}`,{
             
         }).then(response => {
-            
-            alert('Borrado correctamente')
+            console.log(response)
+            console.log(response.data)
+
+            const usuarios = this.state.usuarios.filter(item => item.id !== id);
+            this.setState({usuarios})
             this.updateUser()
         
         })
@@ -64,7 +67,7 @@ export default class  UsuarioForm extends Component{
 
     handleSubmit = () =>{
         axios.post('/post/', {
-            id: this.state.id.length+1,
+
             nombre : this.state.nombre,
             apellidop: this.state.apellidop,
             apellidom: this.state.apellidom,
@@ -75,8 +78,9 @@ export default class  UsuarioForm extends Component{
             rol: this.state.rol
         }).then((response) =>{console.log(response)
             if (response.data.estado){
-                alert('usuario ingresado')
                 
+                alert('usuario ingresado')
+                console.log(response.data.estado)
                 this.updateUser()
                 
 
@@ -102,9 +106,7 @@ export default class  UsuarioForm extends Component{
         <div>
             
             <Form>
-                <InputGroup className="mb-3">
-                    <FormControl name="id" value={this.state.id} onChange={this.cambiarValores} readOnly placeholder="Id" type="text"/><br/>
-                </InputGroup>
+                
                 <InputGroup className="mb-3">
                     <FormControl name="nombre" value={this.state.nombre} onChange={this.cambiarValores}  placeholder="Nombre" type="text"/><br/>
                 </InputGroup>
@@ -142,10 +144,11 @@ export default class  UsuarioForm extends Component{
 
                     <ListGroup.Item key={usuarios.id} className="d-flex justify-content-between align-items-center">
                         {usuarios.id}
+                        {usuarios.nombre}
                         
                         <div>
                             <FaEdit size={20} style={{cursor:'pointer'}}/>
-                            <FaTrashAlt  onClick={this.deleteUser}  size={20} style={{cursor:'pointer'}}/>
+                            <FaTrashAlt  onClick={() => this.deleteUser(usuarios.id)}  size={20} style={{cursor:'pointer'}}/>
                             
                         </div>
                     </ListGroup.Item>
