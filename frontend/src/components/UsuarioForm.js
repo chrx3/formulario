@@ -18,6 +18,7 @@ export default class  UsuarioForm extends Component{
         super();
         this.state = {
             usuarios : [],
+            id : '',
             nombre : '',
             apellidop : '',
             apellidom : '',
@@ -40,16 +41,30 @@ export default class  UsuarioForm extends Component{
 
         }).then((response) =>{
             if (response.data.estado){
+                
                 this.setState({
                     usuarios:response.data.datos
+                    
             })
             }
+        })
+    }
+    //aun no agarra id
+    deleteUser = ()=>{
+        axios.delete('/delete/',{
+            
+        }).then(response => {
+            
+            alert('Borrado correctamente')
+            this.updateUser()
+        
         })
     }
    
 
     handleSubmit = () =>{
         axios.post('/post/', {
+            id: this.state.id.length+1,
             nombre : this.state.nombre,
             apellidop: this.state.apellidop,
             apellidom: this.state.apellidom,
@@ -88,6 +103,9 @@ export default class  UsuarioForm extends Component{
             
             <Form>
                 <InputGroup className="mb-3">
+                    <FormControl name="id" value={this.state.id} onChange={this.cambiarValores} readOnly placeholder="Id" type="text"/><br/>
+                </InputGroup>
+                <InputGroup className="mb-3">
                     <FormControl name="nombre" value={this.state.nombre} onChange={this.cambiarValores}  placeholder="Nombre" type="text"/><br/>
                 </InputGroup>
                 <InputGroup className="mb-3">
@@ -123,11 +141,12 @@ export default class  UsuarioForm extends Component{
                         return(
 
                     <ListGroup.Item key={usuarios.id} className="d-flex justify-content-between align-items-center">
-                        {usuarios.nombre}
+                        {usuarios.id}
                         
                         <div>
                             <FaEdit size={20} style={{cursor:'pointer'}}/>
-                            <FaTrashAlt size={20} style={{cursor:'pointer'}}/>
+                            <FaTrashAlt  onClick={this.deleteUser}  size={20} style={{cursor:'pointer'}}/>
+                            
                         </div>
                     </ListGroup.Item>
                     )
